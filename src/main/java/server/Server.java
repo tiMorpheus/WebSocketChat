@@ -147,6 +147,7 @@ public class Server {
          */
         public void close() {
             try {
+
                 in.close();
                 out.close();
                 socket.close();
