@@ -151,13 +151,6 @@ public class Server {
                 out.close();
                 socket.close();
 
-                // Если больше не осталось соединений, закрываем всё, что есть и
-                // завершаем работу сервера
-                connections.remove(this);
-                if (connections.size() == 0) {
-                    Server.this.closeAll();
-                    System.exit(0);
-                }
             } catch (Exception e) {
                 System.err.println("Потоки не были закрыты!");
             }
