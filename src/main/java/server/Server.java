@@ -26,10 +26,9 @@ public class Server {
      * объект Connection и добавляет его в список подключений.
      */
     public Server() {
-        System.out.println("Server start");
+
         try {
             server = new ServerSocket(PORT);
-            System.out.println("waiting for a users...");
             while (true) {
                 Socket socket = server.accept();
 
@@ -56,9 +55,7 @@ public class Server {
         try {
             server.close();
 
-            // Перебор всех Connection и вызов метода close() для каждого. Блок
-            // synchronized {} необходим для правильного доступа к одним данным
-            // их разных нитей
+            // Перебор всех Connection и вызов метода close() для каждого.
             synchronized(connections) {
                 for(Connection c : connections) {
                     c.close();
@@ -70,14 +67,8 @@ public class Server {
     }
 
     /**
-     * Класс содержит данные, относящиеся к конкретному подключению:
-     * <ul>
-     * <li>имя пользователя</li>
-     * <li>сокет</li>
-     * <li>входной поток BufferedReader</li>
-     * <li>выходной поток PrintWriter</li>
-     * </ul>
-     * Расширяет Thread и в методе run() получает информацию от пользователя и
+     * класс конкретного подключения
+     * получает информацию от юзера и
      * пересылает её другим
      */
     private class Connection extends Thread {
@@ -109,17 +100,15 @@ public class Server {
         }
 
         /**
-         * Запрашивает имя пользователя и ожидает от него сообщений. При
-         * получении каждого сообщения, оно вместе с именем пользователя
+         * Запрашивает имя юзера и ожидает от него сообщений. При
+         * получении каждого сообщения, оно вместе с именем юзера
          * пересылается всем остальным.
-         *
-         * @see java.lang.Thread#run()
          */
         @Override
         public void run() {
             try {
                 name = in.readLine();
-                // Отправляем всем клиентам сообщение о том, что зашёл новый пользователь
+                // Отправляем всем юзерам сообщение о том, что зашёл новый пользователь
                 synchronized(connections) {
                     for(Connection c : connections) {
                         c.out.println(name + " connected~~~~~~~~~~~");
@@ -131,7 +120,7 @@ public class Server {
                     str = in.readLine();
                     if(str.equals("exit")) break;
 
-                    // Отправляем всем клиентам очередное сообщение
+                    // Отправляем всем юзерам очередное сообщение
                     synchronized(connections) {
                         for(Connection c : connections) {
                             c.out.println(name + ": " + str);

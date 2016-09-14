@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- *Клиент
+ * Юзверь
  */
 public class Client {
     private BufferedReader in;
