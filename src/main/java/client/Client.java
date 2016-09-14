@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import main.Const;
+
 /**
  *Клиент
  */
@@ -17,17 +19,13 @@ public class Client {
 
 
     // Запрашивает у юзера ник и организовывает обмен сообщениями с сервером
-    public Client() {
+    public Client(String ip) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите IP для подключения к серверу.");
-        System.out.println("Формат: xxx.xxx.xxx.xxx");
-
-        String ip = scanner.nextLine();
 
         try {
                 //Коннектимся к серверу и подключаем потоки I/O для сообщений
-                socket = new Socket();
+                socket = new Socket(ip, Const.PORT);
                 in     = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out    = new PrintWriter(socket.getOutputStream(), true);
 
@@ -96,5 +94,9 @@ public class Client {
             }
 
         }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client("127.0.0.1");
     }
 }
