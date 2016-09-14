@@ -8,7 +8,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,9 +60,8 @@ public class Server {
             // synchronized {} необходим для правильного доступа к одним данным
             // их разных нитей
             synchronized(connections) {
-                Iterator<Connection> iter = connections.iterator();
-                while(iter.hasNext()) {
-                    ((Connection) iter.next()).close();
+                for(Connection c : connections) {
+                    c.close();
                 }
             }
         } catch (Exception e) {
@@ -81,10 +79,9 @@ public class Server {
      * </ul>
      * Расширяет Thread и в методе run() получает информацию от пользователя и
      * пересылает её другим
-     *
-     * @author Влад
      */
     private class Connection extends Thread {
+
         private BufferedReader in;
         private PrintWriter out;
         private Socket socket;
@@ -124,9 +121,8 @@ public class Server {
                 name = in.readLine();
                 // Отправляем всем клиентам сообщение о том, что зашёл новый пользователь
                 synchronized(connections) {
-                    Iterator<Connection> iter = connections.iterator();
-                    while(iter.hasNext()) {
-                        ((Connection) iter.next()).out.println(name + " cames now");
+                    for(Connection c : connections) {
+                        c.out.println(name + " connected~~~~~~~~~~~");
                     }
                 }
 
@@ -137,18 +133,18 @@ public class Server {
 
                     // Отправляем всем клиентам очередное сообщение
                     synchronized(connections) {
-                        Iterator<Connection> iter = connections.iterator();
-                        while(iter.hasNext()) {
-                            ((Connection) iter.next()).out.println(name + ": " + str);
+                        for(Connection c : connections) {
+                            c.out.println(name + ": " + str);
                         }
                     }
                 }
 
                 synchronized(connections) {
-                    Iterator<Connection> iter = connections.iterator();
-                    while(iter.hasNext()) {
-                        ((Connection) iter.next()).out.println(name + " has left");
+
+                    for (Connection c : connections){
+                        c.out.println(name + " has left~~~~~~~~~~~");
                     }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -179,6 +175,7 @@ public class Server {
         }
     }
 
+    // Запуск сервера
     public static void main(String[] args) {
         Server server = new Server();
     }

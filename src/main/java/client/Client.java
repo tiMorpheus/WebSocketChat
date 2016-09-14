@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-import main.Const;
-
 /**
  *Клиент
  */
@@ -96,6 +94,7 @@ public class Client {
     }
 
     public static void main(String[] args) {
+        // создаем єкземпляр юзера (ип,порт)
         Client client = new Client("127.0.0.1", 8283);
     }
 }
