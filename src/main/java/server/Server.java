@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import main.Const;
-
 /**
  * Cервер
  */
@@ -22,6 +20,8 @@ public class Server {
             Collections.synchronizedList(new ArrayList<Connection>());
     private ServerSocket server;
 
+    public static final int PORT = 8283; // Server port
+
     /**
      * Конструктор создаёт сервер. Затем для каждого подключения создаётся
      * объект Connection и добавляет его в список подключений.
@@ -29,7 +29,7 @@ public class Server {
     public Server() {
         System.out.println("Server start");
         try {
-            server = new ServerSocket(Const.PORT);
+            server = new ServerSocket(PORT);
             System.out.println("waiting for a users...");
             while (true) {
                 Socket socket = server.accept();
@@ -181,7 +181,5 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server();
-
-
     }
 }

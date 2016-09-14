@@ -19,13 +19,12 @@ public class Client {
 
 
     // Запрашивает у юзера ник и организовывает обмен сообщениями с сервером
-    public Client(String ip) {
+    public Client(String ip, int port) {
         Scanner scanner = new Scanner(System.in);
-
 
         try {
                 //Коннектимся к серверу и подключаем потоки I/O для сообщений
-                socket = new Socket(ip, Const.PORT);
+                socket = new Socket(ip, port);
                 in     = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out    = new PrintWriter(socket.getOutputStream(), true);
 
@@ -97,6 +96,6 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        Client client = new Client("127.0.0.1");
+        Client client = new Client("127.0.0.1", 8283);
     }
 }
