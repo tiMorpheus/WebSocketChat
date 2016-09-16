@@ -54,13 +54,6 @@ public class Client {
                          ex.printStackTrace();
                     }
         }
-
-    }
-
-    public void login(){
-
-
-
     }
 
     /**
