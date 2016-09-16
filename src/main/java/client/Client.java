@@ -52,10 +52,16 @@ public class Client {
                              socket.close();
                     } catch (Exception ex) {
                          ex.printStackTrace();
-                          }
+                    }
         }
+
     }
 
+    public void login(){
+
+
+
+    }
 
     /**
      * Создает дополнительную нить для связи с консолью

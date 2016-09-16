@@ -6,9 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Cервер
@@ -18,6 +16,8 @@ public class Server {
     private List<Connection> connections =
             Collections.synchronizedList(new ArrayList<Connection>());
     private ServerSocket server;
+    private Set<String> usernames = new HashSet<>();
+
 
     public static final int PORT = 8283; // Server port
 
@@ -39,7 +39,6 @@ public class Server {
                 // Инициализирует нить и запускает метод run(),
                 // которая выполняется одновременно с остальной программой
                 con.start();
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -107,7 +106,8 @@ public class Server {
         @Override
         public void run() {
             try {
-                name = in.readLine();
+                String name = setLogin();
+
                 // Отправляем всем юзерам сообщение о том, что зашёл новый пользователь
                 synchronized(connections) {
                     for(Connection c : connections) {
@@ -140,6 +140,23 @@ public class Server {
             } finally {
                 close();
             }
+        }
+
+        private String setLogin() {
+            try {
+                sa: while (true) {
+                    name = in.readLine();
+                    while (!usernames.add(name)) {
+                        System.out.println("This name: \""+ name+"\" is already used");
+                        break sa;
+                    }
+                    return name;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return setLogin();
         }
 
         /**
