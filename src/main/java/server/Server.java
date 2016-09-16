@@ -147,7 +147,7 @@ public class Server {
                 sa: while (true) {
                     name = in.readLine();
                     while (!usernames.add(name)) {
-                        System.out.println("This name: \""+ name+"\" is already used");
+                        this.out.println("This name: \""+ name+"\" is already used, try again!!");
                         break sa;
                     }
                     return name;
