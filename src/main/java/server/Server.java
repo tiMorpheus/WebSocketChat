@@ -142,6 +142,10 @@ public class Server {
             }
         }
 
+        /**
+         * Узнает имя юзера
+         *
+         */
         private String setLogin() {
             try {
                 sa: while (true) {
