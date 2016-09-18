@@ -33,7 +33,7 @@ public class Client implements Runnable {
             System.out.println(e);
         }
     }
-    //----------------------------------------------------------------------------------------------
+
     public void disconnect() throws IOException {
         out.println(ClientGUI.userName + " has disconnected.");
         out.flush();
@@ -42,14 +42,12 @@ public class Client implements Runnable {
         System.exit(0);
     }
 
-    //----------------------------------------------------------------------------------------------
+
     public void checkStream(){
         while (true){
             receive();
         }
     }
-
-    //----------------------------------------------------------------------------------------------
     public void receive(){
         if (in.hasNext()){
             String MESSAGE = in.nextLine();
@@ -67,12 +65,12 @@ public class Client implements Runnable {
         }
     }
 
-    //----------------------------------------------------------------------------------------------
+
     public void SEND(String X){
         out.println(ClientGUI.userName + ": " + X);
         out.flush();
         ClientGUI.TF_Message.setText("");
     }
-    //----------------------------------------------------------------------------------------------
+
 
 }

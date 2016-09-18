@@ -19,7 +19,7 @@ public class ClientGUI {
     private static JButton B_ABOUT             = new JButton();
     private static JButton B_LOGIN             = new JButton();
     private static JButton B_DISCONNECT        = new JButton();
-    private static JButton B_RegistMain = new JButton();
+    private static JButton B_RegistMain        = new JButton();
     private static JButton B_SEND              = new JButton();
     private static JLabel L_Message            = new JLabel("Message: ");
     public  static JTextField TF_Message       = new JTextField(20);
@@ -270,9 +270,14 @@ public class ClientGUI {
 
 
     public static void ACTION_B_REGISTRATION(){
+        User registrationUser;
         if (!TF_RegistrationUsername.getText().equals("") & !TF_RegistrationPassword.getText().equals("")) {
+            String username = TF_RegistrationUsername.getText().trim();
+            String password = TF_RegistrationPassword.getText().trim();
 
+            registrationUser = new User(username, password);
 
+            registrationUser.registrate();
 
         }
     }
@@ -323,7 +328,7 @@ public class ClientGUI {
 
     //----------------------------------------------------------------------------------------------
     public static void ACTION_B_HELP(){
-        JOptionPane.showMessageDialog(null, "Chat program");
+        JOptionPane.showMessageDialog(null, "TYMUR RULES");
     }
     //----------------------------------------------------------------------------------------------
 }
