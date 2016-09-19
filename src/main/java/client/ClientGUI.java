@@ -276,8 +276,15 @@ public class ClientGUI {
             String password = TF_RegistrationPassword.getText().trim();
 
             registrationUser = new User(username, password);
-
-            registrationUser.registrate();
+            try {
+                if(UserDAO.addUser(registrationUser)){
+                JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
+                    RegistrationWindow.setVisible(false);
+                }
+            }catch (Exception e){
+                JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
+                System.out.println("PIZDEC OSHIBKA");
+            }
 
         }
     }
