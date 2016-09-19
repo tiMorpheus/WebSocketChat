@@ -50,38 +50,34 @@ public class ClientGUI {
     public  static JTextField TF_RegistrationPassword   = new JTextField(20);
     private static JPanel P_REGISTRATION                = new JPanel();
 
+
+    // start program
     public static void main(String[] args) {
         buildMainWindow();
         initialize();
     }
+
     //----------------------------------------------------------------------------------------------
-    public static void connect(){
-
-        try {
-            final int PORT = 8085;
-            final String HOST = "localhost";
-            Socket SOCK = new Socket(HOST,PORT);
-            System.out.println("You connected to: " + HOST);
-
-            chatClient = new Client(SOCK);
-
-            // Send name to add to "Online" list
-            PrintWriter out = new PrintWriter(SOCK.getOutputStream());
-            out.println(userName);
-            out.flush();
-
-            Thread X = new Thread(chatClient);
-            X.start();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            JOptionPane.showMessageDialog(null, "Server not responding");
-            System.exit(0);
-        }
-
+    // настойка главной панели ГУИ
+    //----------------------------------------------------------------------------------------------
+    /**
+     * Строит главную панель
+     * Вызывает метод configureMainWindow() для настройки кнопок и прочего
+     * Добавляет слушателей на кнопки с помощью метода mainWindow_Action()
+     */
+    public static void buildMainWindow(){
+        MainWindow.setTitle(userName + "'s Chat Box");
+        MainWindow.setSize(450,500);
+        MainWindow.setLocation(220,180);
+        MainWindow.setResizable(false);
+        configureMainWindow();
+        mainWindow_Action();
+        MainWindow.setVisible(true);
     }
 
-    //----------------------------------------------------------------------------------------------
+    /**
+     * Метод делает видимыми основные кнопки на ГУИ
+     */
     public static void initialize() {
         B_SEND.setEnabled(false);
         B_DISCONNECT.setEnabled(false);
@@ -89,58 +85,9 @@ public class ClientGUI {
 
     }
 
-    //----------------------------------------------------------------------------------------------
-    public static void buildLogInWindow(){
-        LogInWindow.setTitle("Log in");
-        LogInWindow.setSize(400,120);
-        LogInWindow.setLocation(250,200);
-        LogInWindow.setResizable(false);
-        P_LogIn = new JPanel();
-        P_LogIn.add(L_EnterUserName);
-        P_LogIn.add(TF_UserNameBox);
-        P_LogIn.add(L_EnterPassword);
-        P_LogIn.add(TF_PasswordBox);
-        P_LogIn.add(B_ENTER);
-        LogInWindow.add(P_LogIn);
-
-        Login_Action();
-        LogInWindow.setVisible(true);
-    }
-
-
-
-    //----------------------------------------------------------------------------------------------
-    public static void buildRegistrationWindow(){
-        RegistrationWindow.setTitle("REGISTRATION");
-        RegistrationWindow.setSize(400,120);
-        RegistrationWindow.setLocation(250,200);
-        RegistrationWindow.setResizable(false);
-        P_REGISTRATION = new JPanel();
-        P_REGISTRATION .add(L_RegistrationUsername);
-        P_REGISTRATION.add(TF_RegistrationUsername);
-        P_REGISTRATION.add(L_RegistrationPassword);
-        P_REGISTRATION.add(TF_RegistrationPassword);
-        P_REGISTRATION.add(B_REGISTRATION);
-        RegistrationWindow.add(P_REGISTRATION);
-
-        registration_Action();
-        RegistrationWindow.setVisible(true);
-    }
-
-    //----------------------------------------------------------------------------------------------
-    public static void buildMainWindow(){
-        MainWindow.setTitle(userName + "'s Chat Box");
-        MainWindow.setSize(450,500);
-        MainWindow.setLocation(220,180);
-        MainWindow.setResizable(false);
-        configureMainWindow();
-        MainWindow_Action();
-        MainWindow.setVisible(true);
-    }
-
-
-
-    //----------------------------------------------------------------------------------------------
+    /**
+     * Настройка кнопок , списком , лейб и прочего
+     */
     public static void configureMainWindow(){
         MainWindow.setBackground(new Color(255, 255, 255));
         MainWindow.setSize(500, 320);
@@ -235,8 +182,85 @@ public class ClientGUI {
         L_LoggedInAsBox.setBounds(340,17,150,20);
 
     }
-
     //----------------------------------------------------------------------------------------------
+    // ЛОГ ин Форма
+    //----------------------------------------------------------------------------------------------
+    public static void buildLogInWindow(){
+        LogInWindow.setTitle("Log in");
+        LogInWindow.setSize(400,120);
+        LogInWindow.setLocation(250,200);
+        LogInWindow.setResizable(false);
+        P_LogIn = new JPanel();
+        P_LogIn.add(L_EnterUserName);
+        P_LogIn.add(TF_UserNameBox);
+        P_LogIn.add(L_EnterPassword);
+        P_LogIn.add(TF_PasswordBox);
+        P_LogIn.add(B_ENTER);
+        LogInWindow.add(P_LogIn);
+
+        Login_Action();
+        LogInWindow.setVisible(true);
+    }
+    /**
+     * Коннекститься к серверу
+     * Подключает потоки ввода/вывода
+     */
+    public static void connect(){
+
+        try {
+            final int PORT = 8085;
+            final String HOST = "localhost";
+            Socket SOCK = new Socket(HOST,PORT);
+            System.out.println("You connected to: " + HOST);
+
+            chatClient = new Client(SOCK);
+
+            // Send name to add to "Online" list
+            PrintWriter out = new PrintWriter(SOCK.getOutputStream());
+            out.println(userName);
+            out.flush();
+
+            Thread X = new Thread(chatClient);
+            X.start();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(null, "Server not responding");
+            System.exit(0);
+        }
+
+    }
+
+
+
+
+
+    public static void buildRegistrationWindow(){
+        RegistrationWindow.setTitle("REGISTRATION");
+        RegistrationWindow.setSize(400,120);
+        RegistrationWindow.setLocation(250,200);
+        RegistrationWindow.setResizable(false);
+        P_REGISTRATION = new JPanel();
+        P_REGISTRATION .add(L_RegistrationUsername);
+        P_REGISTRATION.add(TF_RegistrationUsername);
+        P_REGISTRATION.add(L_RegistrationPassword);
+        P_REGISTRATION.add(TF_RegistrationPassword);
+        P_REGISTRATION.add(B_REGISTRATION);
+        RegistrationWindow.add(P_REGISTRATION);
+
+        registration_Action();
+        RegistrationWindow.setVisible(true);
+    }
+
+
+
+
+
+
+
+
+
+
     public static void Login_Action(){
         B_ENTER.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){
@@ -251,8 +275,9 @@ public class ClientGUI {
     }
 
 
-    //----------------------------------------------------------------------------------------------
+
     public static void ACTION_B_LOGIN(){
+        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         if (!TF_UserNameBox.getText().equals("") & !TF_PasswordBox.getText().equals("")){
             userName = TF_UserNameBox.getText().trim();
             L_LoggedInAsBox.setText(userName);
@@ -290,7 +315,7 @@ public class ClientGUI {
     }
 
     //----------------------------------------------------------------------------------------------
-    public static void MainWindow_Action(){
+    public static void mainWindow_Action(){
 
         B_SEND.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_SEND();}
