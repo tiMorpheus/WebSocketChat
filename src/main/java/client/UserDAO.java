@@ -10,6 +10,8 @@ public class UserDAO {
     private static Connection connection = null;  // соединение с БД
     private static Statement statement = null; // operator
 
+
+
     public static void getConnection(){
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -20,6 +22,39 @@ public class UserDAO {
             System.out.println("Exception in getConnection()");
         }
     }
+
+    public static User getUserByLogin(String userName){
+        try {
+                Set<User> users = getAllUsers();
+
+                for (User temp : users) {
+                    if (temp.getUsername().equals(userName)) {
+                    return temp;
+                    }
+                }
+                throw new Exception();
+            }catch (Exception e){
+                System.out.println("USER NOT FOUND");
+                return null;
+        }
+    }
+    public static boolean checkPassword(String userFromTF, String userFromDB){
+
+        return userFromTF.equals(userFromDB) ? true : false ;
+
+    }
+
+    public static boolean logIn(User user) throws Exception {
+        getConnection();
+        User tempUser = getUserByLogin(user.getUsername());
+
+            if (checkPassword(user.getPassword(), tempUser.getPassword())){
+                return true;
+            } else {
+                throw new Exception();
+            }
+    }
+
 
     public static Set<User> getAllUsers(){
         getConnection();
@@ -35,7 +70,6 @@ public class UserDAO {
             resultSet.close();
         }catch (SQLException e){
             System.out.println("Exception in getAllUsers()");
-            System.out.println(e.getMessage());
         }
         return users;
     }
@@ -61,15 +95,4 @@ public class UserDAO {
             return false;
         }
     }
-
-
-    public static void main(String[] args) {
-
-        Set<User> test = getAllUsers();
-        for(User temp: test){
-            System.out.println(temp.toString());
-        }
-    }
-
-
 }

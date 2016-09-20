@@ -9,7 +9,6 @@ import java.net.Socket;
 
 
 public class ClientGUI {
-
     //Globals
     private static Client chatClient;
     public static String userName = "Anonymous";
@@ -49,6 +48,37 @@ public class ClientGUI {
     private static JLabel L_RegistrationPassword        = new JLabel("Enter password: ");
     public  static JTextField TF_RegistrationPassword   = new JTextField(20);
     private static JPanel P_REGISTRATION                = new JPanel();
+
+
+    /**
+     * Подключение к серверу
+     * Подключает потоки ввода/вывода
+     */
+    public static void connect(){
+
+        try {
+            final int PORT = 8085;
+            final String HOST = "localhost";
+            Socket SOCK = new Socket(HOST,PORT);
+            System.out.println("You connected to: " + HOST);
+
+            chatClient = new Client(SOCK);
+
+            // Send name to add to "Online" list
+            PrintWriter out = new PrintWriter(SOCK.getOutputStream());
+            out.println(userName);
+            out.flush();
+
+            Thread X = new Thread(chatClient);
+            X.start();
+
+        } catch (Exception e) {
+            System.out.println(e);
+            JOptionPane.showMessageDialog(null, "Server not responding");
+            System.exit(0);
+        }
+
+    }
 
 
     // start program
@@ -198,43 +228,24 @@ public class ClientGUI {
         P_LogIn.add(B_ENTER);
         LogInWindow.add(P_LogIn);
 
-        Login_Action();
+        logIn_Action();
         LogInWindow.setVisible(true);
     }
-    /**
-     * Коннекститься к серверу
-     * Подключает потоки ввода/вывода
-     */
-    public static void connect(){
 
-        try {
-            final int PORT = 8085;
-            final String HOST = "localhost";
-            Socket SOCK = new Socket(HOST,PORT);
-            System.out.println("You connected to: " + HOST);
-
-            chatClient = new Client(SOCK);
-
-            // Send name to add to "Online" list
-            PrintWriter out = new PrintWriter(SOCK.getOutputStream());
-            out.println(userName);
-            out.flush();
-
-            Thread X = new Thread(chatClient);
-            X.start();
-
-        } catch (Exception e) {
-            System.out.println(e);
-            JOptionPane.showMessageDialog(null, "Server not responding");
-            System.exit(0);
-        }
-
+    //слушатель на кнопку Log in
+    public static void logIn_Action(){
+        B_ENTER.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                ACTION_B_LOGIN();}
+        });
     }
+    //----------------------------------------------------------------------------------------------
 
 
 
-
-
+    //----------------------------------------------------------------------------------------------
+    // форма регистрации пользавателя
+    //----------------------------------------------------------------------------------------------
     public static void buildRegistrationWindow(){
         RegistrationWindow.setTitle("REGISTRATION");
         RegistrationWindow.setSize(400,120);
@@ -252,44 +263,39 @@ public class ClientGUI {
         RegistrationWindow.setVisible(true);
     }
 
-
-
-
-
-
-
-
-
-
-    public static void Login_Action(){
-        B_ENTER.addActionListener(new java.awt.event.ActionListener(){
-            public void actionPerformed(java.awt.event.ActionEvent evt){
-                ACTION_B_LOGIN();}
-        });
-    }
-
     public static void registration_Action(){
         B_REGISTRATION.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_REGISTRATION();}
         });
     }
-
+    //----------------------------------------------------------------------------------------------
 
 
     public static void ACTION_B_LOGIN(){
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
         if (!TF_UserNameBox.getText().equals("") & !TF_PasswordBox.getText().equals("")){
+
             userName = TF_UserNameBox.getText().trim();
-            L_LoggedInAsBox.setText(userName);
-            ChatServer.currentUsers.add(userName);
-            MainWindow.setTitle(userName + "'s chat box");
-            LogInWindow.setVisible(false);
-            B_SEND.setEnabled(true);
-            B_DISCONNECT.setEnabled(true);
-            B_LOGIN.setEnabled(false);
-            connect();
+            String password = TF_PasswordBox.getText().trim();
+
+            User logInUser = new User(userName,password);
+           try {
+               if(UserDAO.logIn(logInUser)){
+                   L_LoggedInAsBox.setText(userName);
+                   ChatServer.currentUsers.add(userName);
+                   MainWindow.setTitle(userName + "'s chat box");
+                   LogInWindow.setVisible(false);
+                   B_SEND.setEnabled(true);
+                   B_DISCONNECT.setEnabled(true);
+                   B_LOGIN.setEnabled(false);
+                   connect();
+               }
+
+           }catch (Exception e){
+               JOptionPane.showMessageDialog(null,"ERROR");
+           }
         } else {
-            JOptionPane.showMessageDialog(null,"Please enter a name!");
+            JOptionPane.showMessageDialog(null,"Введите логин и пароль");
         }
     }
 
