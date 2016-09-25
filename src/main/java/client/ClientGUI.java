@@ -309,7 +309,7 @@ public class ClientGUI {
                }
            }catch (Exception e){
                JOptionPane.showMessageDialog(null,"ERROR");
-               log.error(e.getMessage(),e);
+               log.warn(e.getMessage(),e);
            }
         } else {
             JOptionPane.showMessageDialog(null,"Введите логин и пароль");
@@ -333,7 +333,7 @@ public class ClientGUI {
                 }
             }catch (Exception e){
                 JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
-                log.error(e.getMessage(),e);
+                log.warn(e.getMessage(),e);
             }
         }
     }
@@ -388,7 +388,7 @@ public class ClientGUI {
         try {
             chatClient.disconnect();
         } catch (Exception e){
-            log.error(e.getMessage(),e);
+            log.warn(e.getMessage(),e);
         }
     }
 

@@ -68,7 +68,7 @@ public class ChatServerReturn implements Runnable {
                 socket.close();
             }
         }catch (Exception x){
-            log.error(x.getMessage(),x);
+            log.warn(x.getMessage(),x);
         }
     }
 }

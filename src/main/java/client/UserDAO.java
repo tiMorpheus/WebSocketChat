@@ -25,7 +25,7 @@ public class UserDAO {
             connection = DriverManager.getConnection(url, "root", "root");
             statement = connection.createStatement();
         } catch (Exception e){
-            log.error(e.getMessage(),e);
+            log.warn(e.getMessage(),e);
         }
     }
 
@@ -45,7 +45,7 @@ public class UserDAO {
                 }
                 throw new Exception();
             }catch (Exception e){
-                log.error(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
                 return null;
         }
     }
@@ -90,7 +90,7 @@ public class UserDAO {
             }
             resultSet.close();
         }catch (SQLException e){
-            log.error(e.getMessage(),e);
+            log.warn(e.getMessage(),e);
         }
         return users;
     }
@@ -117,7 +117,7 @@ public class UserDAO {
             statement.executeUpdate(sql);
             return true;
         } catch (SQLException e) {
-            log.error(e.getMessage(),e);
+            log.warn(e.getMessage(),e);
             return false;
         }
     }

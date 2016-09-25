@@ -1,6 +1,5 @@
 package server;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class ChatServer {
                 X.start();
             }
         } catch (IOException e) {
-            log.error("IOException" + e.getMessage(), e);
+            log.warn("IOException" + e.getMessage(), e);
         }
     }
 

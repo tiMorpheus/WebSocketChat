@@ -36,7 +36,7 @@ public class Client implements Runnable {
             }
         }catch (Exception e){
             System.out.println(e);
-            log.error(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
         }
     }
 
