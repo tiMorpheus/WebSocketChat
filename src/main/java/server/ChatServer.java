@@ -1,5 +1,8 @@
 package server;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -9,37 +12,44 @@ import java.util.Scanner;
 
 public class ChatServer {
 
-
     public static ArrayList<Socket> connectionArray = new ArrayList<>();
     public static ArrayList<String> currentUsers = new ArrayList<>();
+
+    // logger
+    private static final Logger log = Logger.getLogger(ChatServer.class);
 
     public static void main(String[] args) {
 
         try {
-            final int PORT = 8085;
-            ServerSocket SERVER = new ServerSocket(PORT);
-            System.out.println("Waiting for a clients...");
+            // Initialize Server socket with port = 8085
+            ServerSocket server = new ServerSocket(8085);
+            log.info("Waiting for a clients...");
 
             while(true){
-                Socket SOCK = SERVER.accept();
-                connectionArray.add(SOCK);
+                Socket socket = server.accept();  // wait for a client's connection
+                connectionArray.add(socket);      // adding a client socket to arrayList
 
-                System.out.println("Client connected from: " + SOCK.getLocalAddress().getHostName());
+                log.info("Client connected from: " + socket.getLocalAddress().getHostName());
 
-                addUserName(SOCK);
+                addUserName(socket);
 
-                ChatServerReturn CHAT = new ChatServerReturn(SOCK);
+                ChatServerReturn CHAT = new ChatServerReturn(socket);
                 Thread X = new Thread(CHAT);
                 X.start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException" + e.getMessage(), e);
         }
     }
 
-    public static void addUserName(Socket X) throws IOException {
+    /**
+     * Send to the UI list of users who is currently online in chat room
+     * @param socket it's a current user socket, who will take a list
+     * @throws IOException
+     */
+    public static void addUserName(Socket socket) throws IOException {
 
-        Scanner in = new Scanner(X.getInputStream());
+        Scanner in = new Scanner(socket.getInputStream());
         String userName = in.nextLine();
         currentUsers.add(userName);
 

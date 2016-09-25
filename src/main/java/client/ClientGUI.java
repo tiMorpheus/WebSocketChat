@@ -1,5 +1,6 @@
 package client;
 
+import org.apache.log4j.Logger;
 import server.ChatServer;
 
 import javax.swing.*;
@@ -8,78 +9,89 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
+/**
+ * Technical class which
+ * creates main frame, configure buttons
+ * builds a logIn and registration form
+ */
 public class ClientGUI {
+
     //Globals
     private static Client chatClient;
     public static String userName = "Anonymous";
 
+    // logger
+    private static final Logger log = Logger.getLogger(ClientGUI.class);
+
     //GUI Globals - Main Window
-    public  static JFrame MainWindow           = new JFrame();
-    private static JButton B_ABOUT             = new JButton();
-    private static JButton B_LOGIN             = new JButton();
-    private static JButton B_DISCONNECT        = new JButton();
-    private static JButton B_RegistMain        = new JButton();
-    private static JButton B_SEND              = new JButton();
-    private static JLabel L_Message            = new JLabel("Message: ");
-    public  static JTextField TF_Message       = new JTextField(20);
-    private static JLabel L_Conversation       = new JLabel();
-    public  static JTextArea TA_CONVERSATION   = new JTextArea();
-    private static JScrollPane SP_CONVERSATION = new JScrollPane();
-    private static JLabel L_ONLINE             = new JLabel();
-    public  static JList JL_ONLINE             = new JList();
-    private static JScrollPane SP_ONLINE       = new JScrollPane();
-    private static JLabel L_LoggedInAs         = new JLabel();
-    private static JLabel L_LoggedInAsBox      = new JLabel();
+    public  static JFrame mainWindow            = new JFrame();
+    private static JButton bAbout               = new JButton();
+    private static JButton bLogin               = new JButton();
+    private static JButton bDisconnect          = new JButton();
+    private static JButton bRegistrationMain    = new JButton();
+    private static JButton bSEND                = new JButton();
+    private static JLabel lMessage              = new JLabel();
+    public  static JTextField tfMessage         = new JTextField(20);
+    private static JLabel lConversation         = new JLabel();
+    public  static JTextArea taConversation     = new JTextArea();
+    private static JScrollPane spConversation   = new JScrollPane();
+    private static JLabel lOnline               = new JLabel();
+    public  static JList jlOnline               = new JList();
+    private static JScrollPane spOnline         = new JScrollPane();
+    private static JLabel lLoggedInAs           = new JLabel();
+    private static JLabel lLoggedInAsBox        = new JLabel();
 
     //GUI Globals - LogIn window
-    public  static JFrame LogInWindow          = new JFrame();
-    public  static JTextField TF_UserNameBox   = new JTextField(20);
-    private static JButton B_ENTER             = new JButton("Log in");
-    private static JLabel L_EnterUserName      = new JLabel("Enter username: ");
-    private static JLabel L_EnterPassword      = new JLabel("Enter password: ");
-    public  static JTextField TF_PasswordBox   = new JTextField(20);
-    private static JPanel P_LogIn              = new JPanel();
+    public  static JFrame logInWindow            = new JFrame();
+    public  static JTextField tfUsernameBox      = new JTextField(20);
+    private static JButton bEnterLogIn           = new JButton("Log in");
+    private static JLabel lEnterUserNameLogIn    = new JLabel("Enter username: ");
+    private static JLabel lEnterPasswordLogIn    = new JLabel("Enter password: ");
+    public  static JTextField tfPasswordBoxLogIn = new JTextField(20);
+    private static JPanel pLoginForm             = new JPanel();
 
     //GUI Globals - Registration window
-    public  static JFrame RegistrationWindow            = new JFrame();
-    public  static JTextField TF_RegistrationUsername   = new JTextField(20);
-    private static JButton B_REGISTRATION               = new JButton("REGISTRATION");
-    private static JLabel L_RegistrationUsername        = new JLabel("Enter username: ");
-    private static JLabel L_RegistrationPassword        = new JLabel("Enter password: ");
-    public  static JTextField TF_RegistrationPassword   = new JTextField(20);
-    private static JPanel P_REGISTRATION                = new JPanel();
+    public  static JFrame registrationWindow            = new JFrame();
+    public  static JTextField tfRegistrationUsername    = new JTextField(20);
+    private static JButton bRegistration                = new JButton("REGISTRATION");
+    private static JLabel lRegistrationUsername         = new JLabel("Enter username: ");
+    private static JLabel lRegistrationPassword         = new JLabel("Enter password: ");
+    public  static JTextField tfRegistrationPasswordBox = new JTextField(20);
+    private static JPanel pRegistrationForm             = new JPanel();
 
 
     /**
-     * Подключение к серверу
-     * Подключает потоки ввода/вывода
+     * Create connect with the server socket
+     * Send Username to the server's online list of users
+     * Make a thread for a new User
      */
     public static void connect(){
 
         try {
+
             final int PORT = 8085;
             final String HOST = "localhost";
-            Socket SOCK = new Socket(HOST,PORT);
-            System.out.println("You connected to: " + HOST);
+            Socket socket = new Socket(HOST, PORT);
+            log.info("You connected to: " + HOST);
 
-            chatClient = new Client(SOCK);
+            chatClient = new Client(socket);
 
             // Send name to add to "Online" list
-            PrintWriter out = new PrintWriter(SOCK.getOutputStream());
-            out.println(userName);
-            out.flush();
+            PrintWriter output = new PrintWriter(socket.getOutputStream());
+            output.println(userName);
+            output.flush();
+
 
             Thread X = new Thread(chatClient);
             X.start();
 
         } catch (Exception e) {
-            System.out.println(e);
+            log.error("Server not responding", e);
             JOptionPane.showMessageDialog(null, "Server not responding");
             System.exit(0);
         }
 
     }
-
 
     // start program
     public static void main(String[] args) {
@@ -87,286 +99,301 @@ public class ClientGUI {
         initialize();
     }
 
-    //----------------------------------------------------------------------------------------------
-    // настойка главной панели ГУИ
-    //----------------------------------------------------------------------------------------------
+
     /**
-     * Строит главную панель
-     * Вызывает метод configureMainWindow() для настройки кнопок и прочего
-     * Добавляет слушателей на кнопки с помощью метода mainWindow_Action()
+     * Build main frame, and call configure method to set a content on client's UI
      */
     public static void buildMainWindow(){
-        MainWindow.setTitle(userName + "'s Chat Box");
-        MainWindow.setSize(450,500);
-        MainWindow.setLocation(220,180);
-        MainWindow.setResizable(false);
+        mainWindow.setTitle(userName + "'s Chat Box");
+        mainWindow.setSize(450,500);
+        mainWindow.setLocation(220,180);
+        mainWindow.setResizable(false);
         configureMainWindow();
-        mainWindow_Action();
-        MainWindow.setVisible(true);
+        mainWindowAction();
+        mainWindow.setVisible(true);
     }
 
     /**
-     * Метод делает видимыми основные кнопки на ГУИ
+     * Set the main buttons visibility
      */
     public static void initialize() {
-        B_SEND.setEnabled(false);
-        B_DISCONNECT.setEnabled(false);
-        B_LOGIN.setEnabled(true);
-
+        bSEND.setEnabled(false);
+        bDisconnect.setEnabled(false);
+        bLogin.setEnabled(true);
     }
 
     /**
-     * Настройка кнопок , списком , лейб и прочего
+     * Configure a buttons, scrolls, text fields , text areas and other things
      */
     public static void configureMainWindow(){
-        MainWindow.setBackground(new Color(255, 255, 255));
-        MainWindow.setSize(500, 320);
-        MainWindow.getContentPane().setLayout(null);
+        mainWindow.setBackground(new Color(255, 255, 255));
+        mainWindow.setSize(500, 320);
+        mainWindow.getContentPane().setLayout(null);
 
-        B_SEND.setBackground(new Color(0, 0, 255));
-        B_SEND.setForeground(new Color(255, 255, 255));
-        B_SEND.setText("SEND");
-        MainWindow.getContentPane().add(B_SEND);
-        B_SEND.setBounds(10, 40, 110, 25);
+        bSEND.setBackground(new Color(0, 0, 255));
+        bSEND.setForeground(new Color(255, 255, 255));
+        bSEND.setText("Send");
+        mainWindow.getContentPane().add(bSEND);
+        bSEND.setBounds(10, 40, 110, 25);
 
-        B_DISCONNECT.setBackground(new Color(0, 0, 255));
-        B_DISCONNECT.setForeground(new Color(255, 255, 255));
-        B_DISCONNECT.setText("DISCONNECT");
-        MainWindow.getContentPane().add(B_DISCONNECT);
-        B_DISCONNECT.setBounds(130, 40, 110, 25);
+        bDisconnect.setBackground(new Color(0, 0, 255));
+        bDisconnect.setForeground(new Color(255, 255, 255));
+        bDisconnect.setText("DISCONNECT");
+        mainWindow.getContentPane().add(bDisconnect);
+        bDisconnect.setBounds(130, 40, 110, 25);
 
-        B_LOGIN.setBackground(new Color(0, 0, 255));
-        B_LOGIN.setForeground(new Color(255, 255, 255));
-        B_LOGIN.setText("logIN");
-        B_LOGIN.setToolTipText("");
-        MainWindow.getContentPane().add(B_LOGIN);
-        B_LOGIN.setBounds(340, 40, 75, 25);
+        bLogin.setBackground(new Color(0, 0, 255));
+        bLogin.setForeground(new Color(255, 255, 255));
+        bLogin.setText("logIN");
+        bLogin.setToolTipText("");
+        mainWindow.getContentPane().add(bLogin);
+        bLogin.setBounds(340, 40, 75, 25);
 
-        B_RegistMain.setBackground(new Color(0, 0, 255));
-        B_RegistMain.setForeground(new Color(255, 255, 255));
-        B_RegistMain.setText("REG");
-        MainWindow.getContentPane().add(B_RegistMain);
-        B_RegistMain.setBounds(420, 40, 70, 25);
+        bRegistrationMain.setBackground(new Color(0, 0, 255));
+        bRegistrationMain.setForeground(new Color(255, 255, 255));
+        bRegistrationMain.setText("REG");
+        mainWindow.getContentPane().add(bRegistrationMain);
+        bRegistrationMain.setBounds(420, 40, 70, 25);
 
-        B_ABOUT.setBackground(new Color(0, 0, 255));
-        B_ABOUT.setForeground(new Color(255, 255, 255));
-        B_ABOUT.setText("ABOUT");
-        MainWindow.getContentPane().add(B_ABOUT);
-        B_ABOUT.setBounds(250, 40, 81, 25);
+        bAbout.setBackground(new Color(0, 0, 255));
+        bAbout.setForeground(new Color(255, 255, 255));
+        bAbout.setText("ABOUT");
+        mainWindow.getContentPane().add(bAbout);
+        bAbout.setBounds(250, 40, 81, 25);
 
-        L_Message.setText("Message: ");
-        MainWindow.getContentPane().add(L_Message);
-        L_Message.setBounds(10, 10, 60, 20);
+        lMessage.setText("Message: ");
+        mainWindow.getContentPane().add(lMessage);
+        lMessage.setBounds(10, 10, 60, 20);
 
-        TF_Message.setForeground(new Color(0, 0, 255));
-        TF_Message.requestFocus();
-        MainWindow.getContentPane().add(TF_Message);
-        TF_Message.setBounds(70,4, 260, 30);
+        tfMessage.setForeground(new Color(0, 0, 255));
+        tfMessage.requestFocus();
+        mainWindow.getContentPane().add(tfMessage);
+        tfMessage.setBounds(70,4, 260, 30);
 
-        L_Conversation.setHorizontalAlignment(SwingConstants.CENTER);
-        L_Conversation.setText("Conversation");
-        MainWindow.getContentPane().add(L_Conversation);
-        L_Conversation.setBounds(100, 70, 140, 16);
+        lConversation.setHorizontalAlignment(SwingConstants.CENTER);
+        lConversation.setText("Conversation");
+        mainWindow.getContentPane().add(lConversation);
+        lConversation.setBounds(100, 70, 140, 16);
 
-        TA_CONVERSATION.setColumns(20);
-        TA_CONVERSATION.setFont(new Font("Tahoma", 0 , 12));
-        TA_CONVERSATION.setForeground(new Color(0,0,255));
-        TA_CONVERSATION.setLineWrap(true);
-        TA_CONVERSATION.setRows(5);
-        TA_CONVERSATION.setEditable(false);
-
-
-        SP_CONVERSATION.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        SP_CONVERSATION.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        SP_CONVERSATION.setViewportView(TA_CONVERSATION);
-        MainWindow.getContentPane().add(SP_CONVERSATION);
-        SP_CONVERSATION.setBounds(10, 90, 330, 180);
-
-        L_ONLINE.setHorizontalAlignment(SwingConstants.CENTER);
-        L_ONLINE.setText("Currently Online");
-        L_ONLINE.setToolTipText("");
-        MainWindow.getContentPane().add(L_ONLINE);
-        L_ONLINE.setBounds(350, 70, 130, 16);
-
-//        String [] TestNames = {"Tima", "Lina", "Dima"};
-        JL_ONLINE.setForeground(new Color(0, 0, 255));
-//        JL_ONLINE.setListData(TestNames);
-
-        SP_ONLINE.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        SP_ONLINE.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        SP_ONLINE.setViewportView(JL_ONLINE);
-        MainWindow.getContentPane().add(SP_ONLINE);
-        SP_ONLINE.setBounds(350, 90, 130, 180);
+        taConversation.setColumns(20);
+        taConversation.setFont(new Font("Tahoma", 0 , 12));
+        taConversation.setForeground(new Color(0,0,255));
+        taConversation.setLineWrap(true);
+        taConversation.setRows(5);
+        taConversation.setEditable(false);
 
 
-        L_LoggedInAs.setFont(new Font("Tahoma", 0, 12));
-        L_LoggedInAs.setText("Currently logged in as");
-        MainWindow.getContentPane().add(L_LoggedInAs);
-        L_LoggedInAs.setBounds(348,0,140,15);
+        spConversation.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        spConversation.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        spConversation.setViewportView(taConversation);
+        mainWindow.getContentPane().add(spConversation);
+        spConversation.setBounds(10, 90, 330, 180);
 
-        L_LoggedInAsBox.setHorizontalAlignment(SwingConstants.CENTER);
-        L_LoggedInAsBox.setFont(new Font("Tahoma", 0, 12));
-        L_LoggedInAsBox.setForeground(new Color(255,0,0));
-        L_LoggedInAsBox.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
-        MainWindow.getContentPane().add(L_LoggedInAsBox);
-        L_LoggedInAsBox.setBounds(340,17,150,20);
+        lOnline.setHorizontalAlignment(SwingConstants.CENTER);
+        lOnline.setText("Currently Online");
+        lOnline.setToolTipText("");
+        mainWindow.getContentPane().add(lOnline);
+        lOnline.setBounds(350, 70, 130, 16);
+
+        jlOnline.setForeground(new Color(0, 0, 255));
+
+        spOnline.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        spOnline.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        spOnline.setViewportView(jlOnline);
+        mainWindow.getContentPane().add(spOnline);
+        spOnline.setBounds(350, 90, 130, 180);
+
+
+        lLoggedInAs.setFont(new Font("Tahoma", 0, 12));
+        lLoggedInAs.setText("Currently logged in as");
+        mainWindow.getContentPane().add(lLoggedInAs);
+        lLoggedInAs.setBounds(348,0,140,15);
+
+        lLoggedInAsBox.setHorizontalAlignment(SwingConstants.CENTER);
+        lLoggedInAsBox.setFont(new Font("Tahoma", 0, 12));
+        lLoggedInAsBox.setForeground(new Color(255,0,0));
+        lLoggedInAsBox.setBorder(BorderFactory.createLineBorder(new Color(0,0,0)));
+        mainWindow.getContentPane().add(lLoggedInAsBox);
+        lLoggedInAsBox.setBounds(340,17,150,20);
 
     }
-    //----------------------------------------------------------------------------------------------
-    // ЛОГ ин Форма
-    //----------------------------------------------------------------------------------------------
+
+
+    /**
+     * Build LogIn frame when User click on "logIN" button
+     * Set listener on button log in
+     */
     public static void buildLogInWindow(){
-        LogInWindow.setTitle("Log in");
-        LogInWindow.setSize(400,120);
-        LogInWindow.setLocation(250,200);
-        LogInWindow.setResizable(false);
-        P_LogIn = new JPanel();
-        P_LogIn.add(L_EnterUserName);
-        P_LogIn.add(TF_UserNameBox);
-        P_LogIn.add(L_EnterPassword);
-        P_LogIn.add(TF_PasswordBox);
-        P_LogIn.add(B_ENTER);
-        LogInWindow.add(P_LogIn);
+        logInWindow.setTitle("Log in");
+        logInWindow.setSize(400,120);
+        logInWindow.setLocation(250,200);
+        logInWindow.setResizable(false);
+        pLoginForm.add(lEnterUserNameLogIn);
+        pLoginForm.add(tfUsernameBox);
+        pLoginForm.add(lEnterPasswordLogIn);
+        pLoginForm.add(tfPasswordBoxLogIn);
+        pLoginForm.add(bEnterLogIn);
+        logInWindow.add(pLoginForm);
 
-        logIn_Action();
-        LogInWindow.setVisible(true);
+        logInAction();
+        logInWindow.setVisible(true);
     }
 
-    //слушатель на кнопку Log in
-    public static void logIn_Action(){
-        B_ENTER.addActionListener(new java.awt.event.ActionListener(){
+    /**
+     * Set actionListener on "Log in" button in LogIN frame
+     */
+    public static void logInAction(){
+        bEnterLogIn.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){
-                ACTION_B_LOGIN();}
+                logInButtonAction();}
         });
     }
-    //----------------------------------------------------------------------------------------------
 
 
-
-    //----------------------------------------------------------------------------------------------
-    // форма регистрации пользавателя
-    //----------------------------------------------------------------------------------------------
+    /**
+     * Build registration frame when User click on "REG" button
+     */
     public static void buildRegistrationWindow(){
-        RegistrationWindow.setTitle("REGISTRATION");
-        RegistrationWindow.setSize(400,120);
-        RegistrationWindow.setLocation(250,200);
-        RegistrationWindow.setResizable(false);
-        P_REGISTRATION = new JPanel();
-        P_REGISTRATION .add(L_RegistrationUsername);
-        P_REGISTRATION.add(TF_RegistrationUsername);
-        P_REGISTRATION.add(L_RegistrationPassword);
-        P_REGISTRATION.add(TF_RegistrationPassword);
-        P_REGISTRATION.add(B_REGISTRATION);
-        RegistrationWindow.add(P_REGISTRATION);
+        registrationWindow.setTitle("Registration");
+        registrationWindow.setSize(400,120);
+        registrationWindow.setLocation(250,200);
+        registrationWindow.setResizable(false);
+        pRegistrationForm.add(lRegistrationUsername);
+        pRegistrationForm.add(tfRegistrationUsername);
+        pRegistrationForm.add(lRegistrationPassword);
+        pRegistrationForm.add(tfRegistrationPasswordBox);
+        pRegistrationForm.add(bRegistration);
+        registrationWindow.add(pRegistrationForm);
 
-        registration_Action();
-        RegistrationWindow.setVisible(true);
+        registrationAction();
+        registrationWindow.setVisible(true);
     }
 
-    public static void registration_Action(){
-        B_REGISTRATION.addActionListener(new java.awt.event.ActionListener(){
-            public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_REGISTRATION();}
+    /**
+     * Set listener on "Registration" button in registration form
+     */
+    public static void registrationAction(){
+        bRegistration.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                registrationButtonAction();}
         });
     }
-    //----------------------------------------------------------------------------------------------
 
 
-    public static void ACTION_B_LOGIN(){
+    /**
+     * Read values from text fields and send it to UserDAO which check
+     * current values on duplicate. If values are correct, method add Username
+     * to "online list" and call connect() to start chatting
+     */
+    public static void logInButtonAction(){
 
-        if (!TF_UserNameBox.getText().equals("") & !TF_PasswordBox.getText().equals("")){
+        if (!tfUsernameBox.getText().equals("") & !tfPasswordBoxLogIn.getText().equals("")){
 
-            userName = TF_UserNameBox.getText().trim();
-            String password = TF_PasswordBox.getText().trim();
+            userName = tfUsernameBox.getText().trim();
+            String password = tfPasswordBoxLogIn.getText().trim();
 
             User logInUser = new User(userName,password);
            try {
                if(UserDAO.logIn(logInUser)){
-                   L_LoggedInAsBox.setText(userName);
+                   lLoggedInAsBox.setText(userName);
+
+                   // тут шо то вообще срань
                    ChatServer.currentUsers.add(userName);
-                   MainWindow.setTitle(userName + "'s chat box");
-                   LogInWindow.setVisible(false);
-                   B_SEND.setEnabled(true);
-                   B_DISCONNECT.setEnabled(true);
-                   B_LOGIN.setEnabled(false);
+                   //---------------------------------
+                   mainWindow.setTitle(userName + "'s chat box");
+                   logInWindow.setVisible(false);
+                   bSEND.setEnabled(true);
+                   bDisconnect.setEnabled(true);
+                   bLogin.setEnabled(false);
                    connect();
                }
-
            }catch (Exception e){
                JOptionPane.showMessageDialog(null,"ERROR");
+               log.error(e.getMessage(),e);
            }
         } else {
             JOptionPane.showMessageDialog(null,"Введите логин и пароль");
         }
     }
 
-
-    public static void ACTION_B_REGISTRATION(){
+    /**
+     * Read fields in form and send in to UserDAO to add in DATABASE
+     */
+    public static void registrationButtonAction(){
         User registrationUser;
-        if (!TF_RegistrationUsername.getText().equals("") & !TF_RegistrationPassword.getText().equals("")) {
-            String username = TF_RegistrationUsername.getText().trim();
-            String password = TF_RegistrationPassword.getText().trim();
+        if (!tfRegistrationUsername.getText().equals("") & !tfRegistrationPasswordBox.getText().equals("")) {
+            String username = tfRegistrationUsername.getText().trim();
+            String password = tfRegistrationPasswordBox.getText().trim();
 
             registrationUser = new User(username, password);
             try {
                 if(UserDAO.addUser(registrationUser)){
                 JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
-                    RegistrationWindow.setVisible(false);
+                    registrationWindow.setVisible(false);
                 }
             }catch (Exception e){
                 JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
-                System.out.println("PIZDEC OSHIBKA");
+                log.error(e.getMessage(),e);
             }
-
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-    public static void mainWindow_Action(){
+    /**
+     * Set listeners on "SEND","DISCONNECT","LogIn","REG","ABOUT" buttons
+     */
+    public static void mainWindowAction(){
 
-        B_SEND.addActionListener(new java.awt.event.ActionListener(){
-            public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_SEND();}
+        bSEND.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                sendButtonAction();}
         });
 
-        B_DISCONNECT.addActionListener(new java.awt.event.ActionListener(){
-            public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_DISCONNECT();}
+        bDisconnect.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                disconnectButtonAction();}
         });
 
-        B_LOGIN.addActionListener(new java.awt.event.ActionListener(){
+        bLogin.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){
                 buildLogInWindow();}
         });
 
-        B_RegistMain.addActionListener(new java.awt.event.ActionListener(){
+        bRegistrationMain.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt){buildRegistrationWindow();}
         });
 
-        B_ABOUT.addActionListener(new java.awt.event.ActionListener(){
-            public void actionPerformed(java.awt.event.ActionEvent evt){ACTION_B_HELP();}
+        bAbout.addActionListener(new java.awt.event.ActionListener(){
+            public void actionPerformed(java.awt.event.ActionEvent evt){
+                helpButtonAction();}
         });
 
     }
 
-
-    //----------------------------------------------------------------------------------------------
-    public static void ACTION_B_SEND(){
-        if (!TF_Message.getText().equals("")){
-            chatClient.SEND(TF_Message.getText());
-            TF_Message.requestFocus();
+    /**
+     * Read value from "Message" text field and send it to the server
+     * @see Client method send()
+     */
+    public static void sendButtonAction(){
+        if (!tfMessage.getText().equals("")){
+            chatClient.send(tfMessage.getText());
+            tfMessage.requestFocus();
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-    public static void ACTION_B_DISCONNECT() {
+    /**
+     * Disconnect user from server
+     * @see Client method disconnect()
+     */
+    public static void disconnectButtonAction() {
         try {
             chatClient.disconnect();
         } catch (Exception e){
-            e.printStackTrace();
+            log.error(e.getMessage(),e);
         }
     }
 
-    //----------------------------------------------------------------------------------------------
-    public static void ACTION_B_HELP(){
+    // Here can be some useful information for user))
+    public static void helpButtonAction() {
         JOptionPane.showMessageDialog(null, "TYMUR RULES");
     }
-    //----------------------------------------------------------------------------------------------
 }

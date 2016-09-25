@@ -1,5 +1,7 @@
 package server;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -12,24 +14,27 @@ public class ChatServerReturn implements Runnable {
     private PrintWriter out;
     String message = "";
 
+    //logger
+    private static final Logger log = Logger.getLogger(ChatServerReturn.class);
+
     public ChatServerReturn(Socket socket) {
         this.socket = socket;
     }
 
     public void checkConnection() throws IOException {
         if (!socket.isConnected()){
-            for (int i = 1; i <= ChatServer.connectionArray.size(); i++) {
+            for (int i = 0; i < ChatServer.connectionArray.size(); i++) {
                 if (ChatServer.connectionArray.get(i) == socket){
                     ChatServer.connectionArray.remove(i);
                 }
             }
 
             for (Socket tempSocket : ChatServer.connectionArray) {
-                PrintWriter OUTPUT = new PrintWriter(tempSocket.getOutputStream());
-                OUTPUT.println(tempSocket.getLocalAddress().getHostName()+ "disconnected");
-                OUTPUT.flush();
-                //show disconnection at server
-                System.out.println(tempSocket.getLocalAddress().getHostName()+ " disconnected");
+                PrintWriter output = new PrintWriter(tempSocket.getOutputStream());
+                output.println(tempSocket.getLocalAddress().getHostName()+ "disconnected");
+                output.flush();
+
+                log.info("User" + tempSocket.getLocalAddress().getHostName()+ " disconnected");
             }
         }
     }
@@ -50,20 +55,20 @@ public class ChatServerReturn implements Runnable {
 
                     message = in.nextLine();
 
-                    System.out.println("Client said: " + message);
+                    log.info("Client said---" + message);
 
                     for (Socket tempSocket : ChatServer.connectionArray) {
                         PrintWriter output = new PrintWriter(tempSocket.getOutputStream());
                         output.println(message);
                         output.flush();
-                        System.out.println("Sent to: " + tempSocket.getLocalAddress().getHostName());
+                        log.info("Sent to---" + tempSocket.getLocalAddress().getHostName());
                     }
                 }
             }finally {
                 socket.close();
             }
         }catch (Exception x){
-            System.out.println(x);
+            log.error(x.getMessage(),x);
         }
     }
 }

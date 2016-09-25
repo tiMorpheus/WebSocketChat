@@ -1,5 +1,7 @@
 package client;
 
+import org.apache.log4j.Logger;
+
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +12,12 @@ public class UserDAO {
     private static Connection connection = null;  // соединение с БД
     private static Statement statement = null; // operator
 
+    // UserDao logger
+    private static final Logger log = Logger.getLogger(UserDAO.class);
 
-
+    /**
+     * Create connection to the MySQL
+     */
     public static void getConnection(){
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -19,31 +25,43 @@ public class UserDAO {
             connection = DriverManager.getConnection(url, "root", "root");
             statement = connection.createStatement();
         } catch (Exception e){
-            System.out.println("Exception in getConnection()");
+            log.error(e.getMessage(),e);
         }
     }
 
+    /**
+     * Search User in database
+     * @param userName target name
+     * @return User if userName is found otherwise return null
+     */
     public static User getUserByLogin(String userName){
         try {
                 Set<User> users = getAllUsers();
 
-                for (User temp : users) {
-                    if (temp.getUsername().equals(userName)) {
-                    return temp;
+                for (User tempUser : users) {
+                    if (tempUser.getUsername().equals(userName)) {
+                    return tempUser;
                     }
                 }
                 throw new Exception();
             }catch (Exception e){
-                System.out.println("USER NOT FOUND");
+                log.error(e.getMessage(), e);
                 return null;
         }
     }
+
     public static boolean checkPassword(String userFromTF, String userFromDB){
 
         return userFromTF.equals(userFromDB) ? true : false ;
-
     }
 
+
+    /**
+     * here occur loggin magic
+     * @param user user from LogIn form
+     * @return true if user from form equals user from DB otherwise return false
+     * @throws Exception
+     */
     public static boolean logIn(User user) throws Exception {
         getConnection();
         User tempUser = getUserByLogin(user.getUsername());
@@ -55,7 +73,10 @@ public class UserDAO {
             }
     }
 
-
+    /**
+     * Get all Users from DB
+     * @return list of users from DB
+     */
     public static Set<User> getAllUsers(){
         getConnection();
         String sql = "SELECT * FROM users";
@@ -69,13 +90,17 @@ public class UserDAO {
             }
             resultSet.close();
         }catch (SQLException e){
-            System.out.println("Exception in getAllUsers()");
+            log.error(e.getMessage(),e);
         }
         return users;
     }
 
-
-
+    /**
+     * Add User to DB
+     * @param user from registration form
+     * @return true if adding user was correct otherwise return false
+     * @throws Exception
+     */
     public static boolean addUser(User user) throws Exception {
 
         getConnection();
@@ -87,12 +112,14 @@ public class UserDAO {
             }
         }
         String sql = "INSERT INTO users (user_login, user_password) VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"')";
+
         try {
             statement.executeUpdate(sql);
             return true;
         } catch (SQLException e) {
-            System.out.println(">>>> "+e.getMessage());
+            log.error(e.getMessage(),e);
             return false;
         }
     }
+
 }

@@ -1,5 +1,7 @@
 package client;
 
+import org.apache.log4j.Logger;
+
 import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,20 +12,23 @@ public class Client implements Runnable {
 
     Socket socket;
     Scanner in;
-    PrintWriter out;
+    PrintWriter output;
+
+    // Client logger
+    private static final Logger log = Logger.getLogger(Client.class);
 
 
     public Client(Socket socket) {
         this.socket = socket;
     }
 
+    @Override
     public void run() {
-
         try{
             try{
                 in = new Scanner(socket.getInputStream());
-                out = new PrintWriter(socket.getOutputStream());
-                out.flush();
+                output = new PrintWriter(socket.getOutputStream());
+                output.flush();
                 checkStream();
 
             }finally {
@@ -31,16 +36,22 @@ public class Client implements Runnable {
             }
         }catch (Exception e){
             System.out.println(e);
+            log.error(e.getMessage(), e);
         }
     }
 
+    /**
+     * Close socket connection and turn off the chat program
+     * @throws IOException
+     */
     public void disconnect() throws IOException {
-        out.println(ClientGUI.userName + " has disconnected.");
-        out.flush();
+        log.info(ClientGUI.userName + " has disconnected.");
+        output.flush();
         socket.close();
         JOptionPane.showMessageDialog(null,"you disconnected!");
         System.exit(0);
     }
+
 
 
     public void checkStream(){
@@ -48,29 +59,39 @@ public class Client implements Runnable {
             receive();
         }
     }
+
+    /**
+     * Receive messages from the server
+     */
     public void receive(){
+
         if (in.hasNext()){
-            String MESSAGE = in.nextLine();
+            String message = in.nextLine();
 
-            if (MESSAGE.contains("#?!")){
-                String TEMP1 = MESSAGE.substring(3);
-                TEMP1 = TEMP1.replace("[","");
-                TEMP1 = TEMP1.replace("]","");
+            // If server return "online list"
+            if (message.contains("#?!")){
+                String strOnlineUsers = message.substring(3);
+                strOnlineUsers = strOnlineUsers.replace("[","");
+                strOnlineUsers = strOnlineUsers.replace("]","");
 
-                String[] currentUsers = TEMP1.split(", ");
-                ClientGUI.JL_ONLINE.setListData(currentUsers);
+                String[] currentUsers = strOnlineUsers.split(", ");
+                ClientGUI.jlOnline.setListData(currentUsers);
             }else {
-                ClientGUI.TA_CONVERSATION.append(MESSAGE + "\n");
+                // add message to the client UI text area
+                ClientGUI.taConversation.append(message + "\n");
             }
         }
     }
 
-
-    public void SEND(String X){
-        out.println(ClientGUI.userName + ": " + X);
-        out.flush();
-        ClientGUI.TF_Message.setText("");
+    /**
+     * Send message from UI text field to the server(concat username to massage)
+     * @param message from UI
+     */
+    public void send(String message){
+        output.println(ClientGUI.userName + ": " + message);
+        output.flush();
+        //
+        ClientGUI.tfMessage.setText("");
     }
-
 
 }
