@@ -1,9 +1,7 @@
 package client;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import server.ChatServer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -298,10 +296,6 @@ public class ClientGUI {
            try {
                if(UserDAO.logIn(logInUser)){
                    lLoggedInAsBox.setText(userName);
-
-                   // тут шо то вообще срань
-                   ChatServer.currentUsers.add(userName);
-                   //---------------------------------
                    mainWindow.setTitle(userName + "'s chat box");
                    logInWindow.setVisible(false);
                    bSEND.setEnabled(true);
