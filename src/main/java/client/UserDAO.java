@@ -1,6 +1,8 @@
 package client;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ public class UserDAO {
     private static Statement statement = null; // operator
 
     // UserDao logger
-    private static final Logger log = Logger.getLogger(UserDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
 
     /**
      * Create connection to the MySQL

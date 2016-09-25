@@ -1,6 +1,8 @@
 package client;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import server.ChatServer;
 
 import javax.swing.*;
@@ -21,7 +23,7 @@ public class ClientGUI {
     public static String userName = "Anonymous";
 
     // logger
-    private static final Logger log = Logger.getLogger(ClientGUI.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientGUI.class);
 
     //GUI Globals - Main Window
     public  static JFrame mainWindow            = new JFrame();

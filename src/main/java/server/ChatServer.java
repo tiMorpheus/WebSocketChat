@@ -1,6 +1,8 @@
 package server;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +17,7 @@ public class ChatServer {
     public static ArrayList<String> currentUsers = new ArrayList<>();
 
     // logger
-    private static final Logger log = Logger.getLogger(ChatServer.class);
+    private static final Logger log = LoggerFactory.getLogger(ChatServer.class);
 
     public static void main(String[] args) {
 

@@ -1,6 +1,7 @@
 package client;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class Client implements Runnable {
     PrintWriter output;
 
     // Client logger
-    private static final Logger log = Logger.getLogger(Client.class);
+    private static final Logger log = LoggerFactory.getLogger(Client.class);
 
 
     public Client(Socket socket) {
