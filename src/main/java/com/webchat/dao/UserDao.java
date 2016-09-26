@@ -4,7 +4,7 @@ import com.webchat.models.User;
 
 public interface UserDao {
 
-    boolean loggin(User user);
+    boolean logIn(User user);
 
-    boolean registrate(User user) throws Exception;
+    boolean registration(User user) throws Exception;
 }

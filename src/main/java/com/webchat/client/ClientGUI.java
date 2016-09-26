@@ -294,7 +294,7 @@ public class ClientGUI {
 
             User logInUser = new User(userName,password);
             try {
-               if(userDao.loggin(logInUser)){
+               if(userDao.logIn(logInUser)){
                    lLoggedInAsBox.setText(userName);
                    mainWindow.setTitle(userName + "'s chat box");
                    logInWindow.setVisible(false);
@@ -326,7 +326,7 @@ public class ClientGUI {
 
             registrationUser = new User(login, password);
             try {
-                if(userDao.registrate(registrationUser)){
+                if(userDao.registration(registrationUser)){
                 JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
                     registrationWindow.setVisible(false);
                 }

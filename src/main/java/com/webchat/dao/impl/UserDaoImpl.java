@@ -12,13 +12,11 @@ import javax.persistence.TypedQuery;
 
 public class UserDaoImpl implements UserDao {
 
-    public EntityManager em = Persistence.createEntityManagerFactory("WebChat")
-                                            .createEntityManager();
+    public EntityManager em = Persistence.createEntityManagerFactory("WebChat").createEntityManager();
 
     private static final Logger log = LoggerFactory.getLogger(UserDaoImpl.class);
 
     public UserDaoImpl() {
-
     }
 
     /**
@@ -28,7 +26,7 @@ public class UserDaoImpl implements UserDao {
      * @return true if all was fine otherwise return false
      */
     @Override
-    public boolean loggin(User user) {
+    public boolean logIn(User user) {
         try{
             log.debug("before searching userByName");
             User userFromDB = this.getByName(user.getLogin());
@@ -47,13 +45,22 @@ public class UserDaoImpl implements UserDao {
 
     }
 
+    /**
+     * Facade for add user in DB
+     *
+     * @param user from TF in UI
+     * @return true if registration was correct
+     * @throws Exception if user are exist
+     */
     @Override
-    public boolean registrate(User user) throws Exception {
+    public boolean registration(User user) throws Exception {
         log.debug("enter in registrate");
         this.add(user);
         log.debug("end in registrate, registr was correct");
         return true;
     }
+
+
     public User add(User user){
         log.debug("enter in add()");
         em.getTransaction().begin();
