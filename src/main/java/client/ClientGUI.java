@@ -1,5 +1,7 @@
 package client;
 
+import crud.UserDAO;
+import entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,7 +9,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.net.Socket;
-
 
 /**
  * Technical class which
@@ -59,18 +60,16 @@ public class ClientGUI {
     public  static JTextField tfRegistrationPasswordBox = new JTextField(20);
     private static JPanel pRegistrationForm             = new JPanel();
 
-
     /**
      * Create connect with the server socket
      * Send Username to the server's online list of users
      * Make a thread for a new User
      */
     public static void connect(){
-
         try {
-
             final int PORT = 8085;
             final String HOST = "localhost";
+
             Socket socket = new Socket(HOST, PORT);
             log.info("You connected to: " + HOST);
 
@@ -99,7 +98,6 @@ public class ClientGUI {
         initialize();
     }
 
-
     /**
      * Build main frame, and call configure method to set a content on client's UI
      */
@@ -108,8 +106,10 @@ public class ClientGUI {
         mainWindow.setSize(450,500);
         mainWindow.setLocation(220,180);
         mainWindow.setResizable(false);
+
         configureMainWindow();
         mainWindowAction();
+
         mainWindow.setVisible(true);
     }
 
@@ -182,7 +182,6 @@ public class ClientGUI {
         taConversation.setRows(5);
         taConversation.setEditable(false);
 
-
         spConversation.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         spConversation.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         spConversation.setViewportView(taConversation);
@@ -203,7 +202,6 @@ public class ClientGUI {
         mainWindow.getContentPane().add(spOnline);
         spOnline.setBounds(350, 90, 130, 180);
 
-
         lLoggedInAs.setFont(new Font("Tahoma", 0, 12));
         lLoggedInAs.setText("Currently logged in as");
         mainWindow.getContentPane().add(lLoggedInAs);
@@ -217,7 +215,6 @@ public class ClientGUI {
         lLoggedInAsBox.setBounds(340,17,150,20);
 
     }
-
 
     /**
      * Build LogIn frame when User click on "logIN" button
@@ -279,7 +276,6 @@ public class ClientGUI {
         });
     }
 
-
     /**
      * Read values from text fields and send it to UserDAO which check
      * current values on duplicate. If values are correct, method add Username
@@ -293,7 +289,7 @@ public class ClientGUI {
             String password = tfPasswordBoxLogIn.getText().trim();
 
             User logInUser = new User(userName,password);
-           try {
+            try {
                if(UserDAO.logIn(logInUser)){
                    lLoggedInAsBox.setText(userName);
                    mainWindow.setTitle(userName + "'s chat box");
@@ -303,10 +299,10 @@ public class ClientGUI {
                    bLogin.setEnabled(false);
                    connect();
                }
-           }catch (Exception e){
+            }catch (Exception e){
                JOptionPane.showMessageDialog(null,"ERROR");
                log.warn(e.getMessage(),e);
-           }
+            }
         } else {
             JOptionPane.showMessageDialog(null,"Введите логин и пароль");
         }
@@ -317,6 +313,7 @@ public class ClientGUI {
      */
     public static void registrationButtonAction(){
         User registrationUser;
+
         if (!tfRegistrationUsername.getText().equals("") & !tfRegistrationPasswordBox.getText().equals("")) {
             String username = tfRegistrationUsername.getText().trim();
             String password = tfRegistrationPasswordBox.getText().trim();

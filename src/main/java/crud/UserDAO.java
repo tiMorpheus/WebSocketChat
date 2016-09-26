@@ -1,5 +1,6 @@
-package client;
+package crud;
 
+import entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class UserDAO {
                 Set<User> users = getAllUsers();
 
                 for (User tempUser : users) {
-                    if (tempUser.getUsername().equals(userName)) {
+                    if (tempUser.getLogin().equals(userName)) {
                     return tempUser;
                     }
                 }
@@ -65,7 +66,7 @@ public class UserDAO {
      */
     public static boolean logIn(User user) throws Exception {
         getConnection();
-        User tempUser = getUserByLogin(user.getUsername());
+        User tempUser = getUserByLogin(user.getLogin());
 
             if (checkPassword(user.getPassword(), tempUser.getPassword())){
                 return true;
@@ -108,11 +109,11 @@ public class UserDAO {
         Set<User> userSet = getAllUsers();
 
         for (User tempUser : userSet ) {
-            if(tempUser.getUsername().equals(user.getUsername())){
+            if(tempUser.getLogin().equals(user.getLogin())){
                 throw new Exception();
             }
         }
-        String sql = "INSERT INTO users (user_login, user_password) VALUES ('"+user.getUsername()+"', '"+user.getPassword()+"')";
+        String sql = "INSERT INTO users (user_login, user_password) VALUES ('"+user.getLogin()+"', '"+user.getPassword()+"')";
 
         try {
             statement.executeUpdate(sql);
@@ -122,5 +123,4 @@ public class UserDAO {
             return false;
         }
     }
-
 }

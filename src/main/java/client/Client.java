@@ -3,11 +3,11 @@ package client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
+import javax.swing.*;
 
 public class Client implements Runnable {
 
@@ -17,7 +17,6 @@ public class Client implements Runnable {
 
     // Client logger
     private static final Logger log = LoggerFactory.getLogger(Client.class);
-
 
     public Client(Socket socket) {
         this.socket = socket;
@@ -52,8 +51,6 @@ public class Client implements Runnable {
         JOptionPane.showMessageDialog(null,"you disconnected!");
         System.exit(0);
     }
-
-
 
     public void checkStream(){
         while (true){
@@ -94,5 +91,4 @@ public class Client implements Runnable {
         //
         ClientGUI.tfMessage.setText("");
     }
-
 }
