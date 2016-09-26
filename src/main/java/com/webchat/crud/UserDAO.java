@@ -1,6 +1,6 @@
-package crud;
+package com.webchat.crud;
 
-import entity.User;
+import com.webchat.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

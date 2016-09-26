@@ -1,4 +1,4 @@
-package entity;
+package com.webchat.model;
 
 import javax.persistence.*;
 

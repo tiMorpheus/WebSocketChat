@@ -1,7 +1,7 @@
 package service;
 
-import crud.UserService;
-import entity.User;
+import com.webchat.crud.UserService;
+import com.webchat.model.User;
 import org.junit.Test;
 
 

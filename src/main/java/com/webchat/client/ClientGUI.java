@@ -1,7 +1,7 @@
-package client;
+package com.webchat.client;
 
-import crud.UserDAO;
-import entity.User;
+import com.webchat.crud.UserDAO;
+import com.webchat.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

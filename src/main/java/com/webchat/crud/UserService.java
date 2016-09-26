@@ -1,11 +1,10 @@
-package crud;
+package com.webchat.crud;
 
-import entity.User;
+import com.webchat.model.User;
 
 import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class UserService {
