@@ -1,7 +1,8 @@
 package com.webchat.client;
 
-import com.webchat.crud.UserDAO;
-import com.webchat.model.User;
+import com.webchat.dao.UserDao;
+import com.webchat.dao.impl.UserDaoImpl;
+import com.webchat.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,9 @@ public class ClientGUI {
     //Globals
     private static Client chatClient;
     public static String userName = "Anonymous";
+
+    // Dao
+    private static UserDao userDao = new UserDaoImpl();
 
     // logger
     private static final Logger log = LoggerFactory.getLogger(ClientGUI.class);
@@ -44,7 +48,7 @@ public class ClientGUI {
 
     //GUI Globals - LogIn window
     public  static JFrame logInWindow            = new JFrame();
-    public  static JTextField tfUsernameBox      = new JTextField(20);
+    public  static JTextField tfUsernameBoxLogIn = new JTextField(20);
     private static JButton bEnterLogIn           = new JButton("Log in");
     private static JLabel lEnterUserNameLogIn    = new JLabel("Enter username: ");
     private static JLabel lEnterPasswordLogIn    = new JLabel("Enter password: ");
@@ -226,7 +230,7 @@ public class ClientGUI {
         logInWindow.setLocation(250,200);
         logInWindow.setResizable(false);
         pLoginForm.add(lEnterUserNameLogIn);
-        pLoginForm.add(tfUsernameBox);
+        pLoginForm.add(tfUsernameBoxLogIn);
         pLoginForm.add(lEnterPasswordLogIn);
         pLoginForm.add(tfPasswordBoxLogIn);
         pLoginForm.add(bEnterLogIn);
@@ -277,20 +281,20 @@ public class ClientGUI {
     }
 
     /**
-     * Read values from text fields and send it to UserDAO which check
+     * Read values from text fields and send it to UserDao which check
      * current values on duplicate. If values are correct, method add Username
      * to "online list" and call connect() to start chatting
      */
     public static void logInButtonAction(){
 
-        if (!tfUsernameBox.getText().equals("") & !tfPasswordBoxLogIn.getText().equals("")){
+        if (!tfUsernameBoxLogIn.getText().equals("") & !tfPasswordBoxLogIn.getText().equals("")){
 
-            userName = tfUsernameBox.getText().trim();
+            userName = tfUsernameBoxLogIn.getText().trim();
             String password = tfPasswordBoxLogIn.getText().trim();
 
             User logInUser = new User(userName,password);
             try {
-               if(UserDAO.logIn(logInUser)){
+               if(userDao.loggin(logInUser)){
                    lLoggedInAsBox.setText(userName);
                    mainWindow.setTitle(userName + "'s chat box");
                    logInWindow.setVisible(false);
@@ -298,6 +302,8 @@ public class ClientGUI {
                    bDisconnect.setEnabled(true);
                    bLogin.setEnabled(false);
                    connect();
+               } else {
+                   JOptionPane.showMessageDialog(null,"Неправильные данные");
                }
             }catch (Exception e){
                JOptionPane.showMessageDialog(null,"ERROR");
@@ -309,18 +315,18 @@ public class ClientGUI {
     }
 
     /**
-     * Read fields in form and send in to UserDAO to add in DATABASE
+     * Read fields in form and send in to UserDao to add in DATABASE
      */
     public static void registrationButtonAction(){
         User registrationUser;
 
         if (!tfRegistrationUsername.getText().equals("") & !tfRegistrationPasswordBox.getText().equals("")) {
-            String username = tfRegistrationUsername.getText().trim();
+            String login = tfRegistrationUsername.getText().trim();
             String password = tfRegistrationPasswordBox.getText().trim();
 
-            registrationUser = new User(username, password);
+            registrationUser = new User(login, password);
             try {
-                if(UserDAO.addUser(registrationUser)){
+                if(userDao.registrate(registrationUser)){
                 JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
                     registrationWindow.setVisible(false);
                 }
@@ -328,6 +334,8 @@ public class ClientGUI {
                 JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
                 log.warn(e.getMessage(),e);
             }
+        }else {
+            JOptionPane.showMessageDialog(null, "Введите все поля");
         }
     }
 

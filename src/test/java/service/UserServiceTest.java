@@ -1,17 +1,17 @@
 package service;
 
-import com.webchat.crud.UserService;
-import com.webchat.model.User;
+import com.webchat.dao.impl.UserDaoImpl;
+import com.webchat.models.User;
 import org.junit.Test;
 
 
 public class UserServiceTest {
 
-    UserService service = new UserService();
+    UserDaoImpl service = new UserDaoImpl();
 
     @Test
     public void testSaveRecord() throws Exception{
-        User user1 = new User("2","2");
+        User user1 = new User("5","5");
 
         User user = service.add(user1);
 
@@ -20,9 +20,9 @@ public class UserServiceTest {
 
     @Test
     public void duplicateTest() throws Exception{
-        User original = new User("boss","pass1");
+        User original = new User("boss2","pass1");
 
-        User duplicate = new User("boss","pass2");
+        User duplicate = new User("boss2","pass2");
 
         User userMain = service.add(original);
         try{
@@ -39,6 +39,19 @@ public class UserServiceTest {
         User userFromDB = service.getByName(user.getLogin());
 
         System.out.println(userFromDB);
+    }
+
+    @Test
+    public void testEmptySelect(){
+        try {
+            User user1 = new User("fantomas", "123");
+
+            User userFromDB = service.getByName(user1.getLogin());
+
+            System.out.println(userFromDB);
+        } catch (Exception e){
+            e.getMessage();
+        }
     }
 
 
