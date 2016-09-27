@@ -2,10 +2,7 @@ package com.webchat.models;
 
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,10 +10,11 @@ import java.util.Set;
 @Table(name = "role")
 public class Role extends Model {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "title", length = 25, insertable = false, updatable = false)
     private RoleList title;
 
-    @Column(name = "title", length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
     @ManyToMany(mappedBy = "roles")

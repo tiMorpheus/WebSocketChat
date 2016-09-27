@@ -1,8 +1,13 @@
 package service;
 
 import com.webchat.dao.impl.UserDaoImpl;
+import com.webchat.models.Role;
+import com.webchat.models.RoleList;
 import com.webchat.models.User;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class UserServiceTest {
@@ -52,6 +57,26 @@ public class UserServiceTest {
         } catch (Exception e){
             e.getMessage();
         }
+    }
+
+    @Test
+    public void testAddRoleInDb(){
+        User adm = new User();
+        Role admin = new Role();
+        admin.setTitle(RoleList.ADMIN);
+        Set<Role> s = new HashSet<>();
+        s.add(admin);
+        adm.setLogin("adminus");
+        adm.setPassword("admin");
+        adm.setRoles(s);
+
+        admin.setDescription("The head of the application, creator, god, sex symbol");
+
+        service.em.getTransaction().begin();
+        service.em.merge(adm);
+        service.em.getTransaction().commit();
+
+
     }
 
 

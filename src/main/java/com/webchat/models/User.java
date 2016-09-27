@@ -18,10 +18,10 @@ public class User extends Model{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;*/
 
-    @Column(name = "login", unique = true, length = 20)
+    @Column(name = "login", unique = true, nullable = false, length = 20)
     private String login;
 
-    @Column(name = "password", length = 20)
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -37,6 +37,22 @@ public class User extends Model{
 
         this.login = login;
         this.password = password;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public String getLogin() {
