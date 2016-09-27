@@ -47,22 +47,24 @@ public class ClientGUI {
     private static JLabel lLoggedInAsBox        = new JLabel();
 
     //GUI Globals - LogIn window
-    public  static JFrame logInWindow            = new JFrame();
-    public  static JTextField tfUsernameBoxLogIn = new JTextField(20);
-    private static JButton bEnterLogIn           = new JButton("Log in");
-    private static JLabel lEnterUserNameLogIn    = new JLabel("Enter username: ");
-    private static JLabel lEnterPasswordLogIn    = new JLabel("Enter password: ");
-    public  static JTextField tfPasswordBoxLogIn = new JTextField(20);
-    private static JPanel pLoginForm             = new JPanel();
+    public  static JFrame logInWindow               = new JFrame();
+    public  static JTextField tfUsernameBoxLogIn    = new JTextField(20);
+    private static JButton bEnterLogIn              = new JButton("Log in");
+    private static JLabel lEnterUserNameLogIn       = new JLabel("Enter username: ");
+    private static JLabel lEnterPasswordLogIn       = new JLabel("Enter password: ");
+    public static JPasswordField pfPasswordBoxLogIn = new JPasswordField(20);
+    private static JPanel pLoginForm                = new JPanel();
 
     //GUI Globals - Registration window
-    public  static JFrame registrationWindow            = new JFrame();
-    public  static JTextField tfRegistrationUsername    = new JTextField(20);
-    private static JButton bRegistration                = new JButton("REGISTRATION");
-    private static JLabel lRegistrationUsername         = new JLabel("Enter username: ");
-    private static JLabel lRegistrationPassword         = new JLabel("Enter password: ");
-    public  static JTextField tfRegistrationPasswordBox = new JTextField(20);
-    private static JPanel pRegistrationForm             = new JPanel();
+    public  static JFrame registrationWindow             = new JFrame();
+    public  static JTextField tfRegistrationUsername     = new JTextField(20);
+    private static JButton bRegistration                 = new JButton("REGISTRATION");
+    private static JLabel lRegistrationUsername          = new JLabel("Enter username: ");
+    private static JLabel lRegistrationPassword          = new JLabel("Enter password: ");
+    public  static JPasswordField pfRegistrationPassword = new JPasswordField(20);
+    private static JLabel lConfirmPasswordRegistation    = new JLabel("Confirm password");
+    public  static JPasswordField pfConfirmRgstrPassword = new JPasswordField(20);
+    private static JPanel pRegistrationForm              = new JPanel();
 
     /**
      * Create connect with the server socket
@@ -232,7 +234,7 @@ public class ClientGUI {
         pLoginForm.add(lEnterUserNameLogIn);
         pLoginForm.add(tfUsernameBoxLogIn);
         pLoginForm.add(lEnterPasswordLogIn);
-        pLoginForm.add(tfPasswordBoxLogIn);
+        pLoginForm.add(pfPasswordBoxLogIn);
         pLoginForm.add(bEnterLogIn);
         logInWindow.add(pLoginForm);
 
@@ -256,13 +258,17 @@ public class ClientGUI {
      */
     public static void buildRegistrationWindow(){
         registrationWindow.setTitle("Registration");
-        registrationWindow.setSize(400,120);
+        registrationWindow.setSize(400,200);
         registrationWindow.setLocation(250,200);
         registrationWindow.setResizable(false);
         pRegistrationForm.add(lRegistrationUsername);
         pRegistrationForm.add(tfRegistrationUsername);
         pRegistrationForm.add(lRegistrationPassword);
-        pRegistrationForm.add(tfRegistrationPasswordBox);
+        pRegistrationForm.add(pfRegistrationPassword);
+
+        pRegistrationForm.add(lConfirmPasswordRegistation);
+        pRegistrationForm.add(pfConfirmRgstrPassword);
+
         pRegistrationForm.add(bRegistration);
         registrationWindow.add(pRegistrationForm);
 
@@ -287,10 +293,10 @@ public class ClientGUI {
      */
     public static void logInButtonAction(){
 
-        if (!tfUsernameBoxLogIn.getText().equals("") & !tfPasswordBoxLogIn.getText().equals("")){
+        if (!tfUsernameBoxLogIn.getText().equals("") & !pfPasswordBoxLogIn.getText().equals("")){
 
             userName = tfUsernameBoxLogIn.getText().trim();
-            String password = tfPasswordBoxLogIn.getText().trim();
+            String password = pfPasswordBoxLogIn.getText().trim();
 
             User logInUser = new User(userName,password);
             try {
@@ -319,25 +325,57 @@ public class ClientGUI {
      */
     public static void registrationButtonAction(){
         User registrationUser;
+        boolean flag = true;
+        String login = tfRegistrationUsername.getText();
+        String password = pfRegistrationPassword.getText();
+        String confirmPassword = pfConfirmRgstrPassword.getText();
 
-        if (!tfRegistrationUsername.getText().equals("") & !tfRegistrationPasswordBox.getText().equals("")) {
-            String login = tfRegistrationUsername.getText().trim();
-            String password = tfRegistrationPasswordBox.getText().trim();
-
-            registrationUser = new User(login, password);
-            try {
-                if(userDao.registration(registrationUser)){
-                JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
-                    registrationWindow.setVisible(false);
-                }
-            }catch (Exception e){
-                JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
-                log.warn(e.getMessage(),e);
+            //check if user enter login value
+            if (login.equals("")) {
+                JOptionPane.showMessageDialog(null, "Введите логин");
+                flag = false;
             }
-        }else {
-            JOptionPane.showMessageDialog(null, "Введите все поля");
+
+            //check if user enter password value
+            if (password.equals("")) {
+                JOptionPane.showMessageDialog(null, "Введите пароль");
+                flag = false;
+            }
+
+            //check if user enter confirm password value
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(null, "Повторите пароль");
+                flag = false;
+            }
+
+        registrationUser = new User(login, password);
+        try {
+            if(flag && userDao.registration(registrationUser)){
+                JOptionPane.showMessageDialog(null, "ВАС ДОБАВИЛИ В БАЗУ ДАННЫХ");
+                registrationWindow.setVisible(false);
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Такой пользователь уже есть");
+            log.warn(e.getMessage(), e);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Set listeners on "SEND","DISCONNECT","LogIn","REG","ABOUT" buttons
