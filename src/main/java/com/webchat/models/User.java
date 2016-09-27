@@ -1,6 +1,10 @@
 package com.webchat.models;
 
+
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -8,17 +12,22 @@ import javax.persistence.*;
         @NamedQuery(name = "User.getAll", query = "SELECT u from User u"),
         @NamedQuery(name = "User.getByLogin", query = "SELECT u from User u where u.login=:login")
 })
-public class User {
+public class User extends Model{
 
-    @Id
+/*    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private int id;*/
 
     @Column(name = "login", unique = true, length = 20)
     private String login;
 
     @Column(name = "password", length = 20)
     private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name="user_role", joinColumns = @JoinColumn(name = "user_id", nullable = false, updatable = false),
+            inverseJoinColumns=@JoinColumn(name ="role_id", nullable = false, updatable = false))
+    private Set<Role> roles = new HashSet<>();
 
     public User(){
 
@@ -28,10 +37,6 @@ public class User {
 
         this.login = login;
         this.password = password;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getLogin() {
@@ -45,8 +50,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", username='" + login + '\'' +
+                "login='" + login + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

@@ -11,7 +11,7 @@ public class UserServiceTest {
 
     @Test
     public void testSaveRecord() throws Exception{
-        User user1 = new User("5","5");
+        User user1 = new User("21","5");
 
         User user = service.add(user1);
 

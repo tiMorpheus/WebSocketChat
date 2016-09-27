@@ -360,23 +360,6 @@ public class ClientGUI {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Set listeners on "SEND","DISCONNECT","LogIn","REG","ABOUT" buttons
      */
