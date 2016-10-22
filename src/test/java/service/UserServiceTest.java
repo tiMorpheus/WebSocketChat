@@ -1,8 +1,6 @@
 package service;
 
 import com.webchat.dao.impl.UserDaoImpl;
-import com.webchat.models.Role;
-import com.webchat.models.RoleList;
 import com.webchat.models.User;
 import org.junit.Test;
 
